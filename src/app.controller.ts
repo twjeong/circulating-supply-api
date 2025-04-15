@@ -30,9 +30,13 @@ export class AppController {
       try {
         const rawBalance = await token.methods.balanceOf(addr).call();
 
-        // rawBalance가 문자열인지 확인
-        if (rawBalance && typeof rawBalance === 'string') {
-          excludedTotal += parseFloat(web3.utils.fromWei(rawBalance, 'ether'));
+        // rawBalance가 BigInt인지 확인하고 처리
+        if (rawBalance) {
+          const balanceInEther = web3.utils.fromWei(
+            rawBalance.toString(), // BigInt를 문자열로 변환
+            'ether'
+          );
+          excludedTotal += parseFloat(balanceInEther);
         } else {
           console.warn(`Invalid balance format for address ${addr}:`, rawBalance);
         }
