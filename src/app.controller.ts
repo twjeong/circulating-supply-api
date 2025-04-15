@@ -27,8 +27,18 @@ export class AppController {
     let excludedTotal = 0;
 
     for (const addr of excludeAddresses) {
-      const rawBalance = await token.methods.balanceOf(addr).call();
-      excludedTotal += parseFloat(web3.utils.fromWei(rawBalance, 'ether'));
+      try {
+        const rawBalance = await token.methods.balanceOf(addr).call();
+
+        // rawBalance가 문자열인지 확인
+        if (rawBalance && typeof rawBalance === 'string') {
+          excludedTotal += parseFloat(web3.utils.fromWei(rawBalance, 'ether'));
+        } else {
+          console.warn(`Invalid balance format for address ${addr}:`, rawBalance);
+        }
+      } catch (error) {
+        console.error(`Failed to fetch balance for address ${addr}:`, error);
+      }
     }
 
     const circulatingSupply = totalSupply - excludedTotal;
