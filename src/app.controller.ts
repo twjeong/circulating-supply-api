@@ -48,4 +48,9 @@ export class AppController {
     const circulatingSupply = totalSupply - excludedTotal;
     return { circulating_supply: circulatingSupply };
   }
+
+  @Get('supply/total')
+  async getTotalSupply() {
+    return { total_supply: totalSupply };
+  }
 }
